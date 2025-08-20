@@ -1,42 +1,38 @@
-import { config } from "../data.js";
-
 export default class Popup {
   constructor(popupSelector) {
-    this._popupSelector = popupSelector;
-    this._popup = document.querySelector(this._popupSelector);
-    this._popupCloseButton = this._popup.querySelector(config.popupCloseButtonSelector);
-    this._boundHandleEscClose = this._handleEscClose.bind(this);
+    this._popup = document.querySelector(popupSelector);
+    if (!this._popup) {
+      console.error(`Popup with selector ${popupSelector} not found`);
+      return;
+    }
+    this._popupCloseButton = this._popup.querySelector('.popup__button-close');
+    this._handleEscClose = this._handleEscClose.bind(this);
   }
 
   open() {
-    this._popup.classList.remove(config.popupIsHiddenClass);
-    this._popup.classList.add(config.popupIsVisibleClass);
-    this.setEventListeners();
+    this._popup.classList.remove('popup_hidden');
+    this._popup.classList.add('popup-active');
+    document.addEventListener('keydown', this._handleEscClose);
   }
 
   close() {
-    this._popup.classList.add(config.popupIsHiddenClass);
-    this._popup.classList.remove(config.popupIsVisibleClass);
-    document.removeEventListener("keydown", this._boundHandleEscClose);
+    this._popup.classList.add('popup_hidden');
+    this._popup.classList.remove('popup-active');
+    document.removeEventListener('keydown', this._handleEscClose);
   }
 
-  _handleEscClose(e) {
-    const isEscapeKey = e.key === "Escape";
-    if (isEscapeKey) {
+  _handleEscClose(evt) {
+    if (evt.key === 'Escape') {
       this.close();
     }
   }
 
   setEventListeners() {
-    document.addEventListener("keydown", this._boundHandleEscClose);
-    this._popupCloseButton.addEventListener("click", (e) => {
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      this.close();
-    });
-    this._popup.addEventListener("click", (e) => {
-      const isModal = this._popup === e.target;
-      if (isModal) this.close();
+    this._popupCloseButton.addEventListener('click', () => this.close());
+    this._popup.addEventListener('mousedown', (evt) => {
+      if (evt.target === this._popup) {
+        this.close();
+      }
     });
   }
 }
