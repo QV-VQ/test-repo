@@ -8,54 +8,90 @@
 
 .nav__avatar-container {
   width: 120px;
-}
-
-.nav__avatar-position {
+  height: 120px;
   margin-right: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .nav__avatar {
   width: 100%;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nav__container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .nav__name-edit {
   display: flex;
+  align-items: center;
   gap: 18px;
-  margin-right: 12px;
-  justify-content: start;
-  align-items: first baseline;
 }
 
 .nav__name {
   font-weight: 500;
-  font-family: 'Oddval';
   font-size: 42px;
-  line-height: calc(48/42);
-  margin: 0 0 16px;
+  line-height: 1.14;
+  margin: 0;
+  color: #fff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 373px;
 }
 
 .nav__job-title {
   font-size: 18px;
+  line-height: 1.22;
+  margin: 0;
+  color: #fff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 415px;
 }
 
 .nav__button-edit {
   width: 24px;
   height: 24px;
   background-image: url(../images/edit-button.svg);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  flex-shrink: 0;
+}
+
+.nav__button-edit:hover {
+  opacity: 0.6;
 }
 
 .nav__button-add {
   margin-left: auto;
   width: 150px;
   height: 50px;
-  border: 2px solid white;
+  border: 2px solid #fff;
+  border-radius: 2px;
   background-image: url(../images/add_icon.svg);
+  background-color: transparent;
   background-repeat: no-repeat;
   background-position: center;
+  background-size: 22px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  flex-shrink: 0;
+}
+
+.nav__button-add:hover {
+  opacity: 0.6;
 }
 
 @media screen and (max-width: 879px) {
@@ -64,9 +100,21 @@
   }
 }
 
+@media screen and (max-width: 680px) {
+  .nav__name {
+    font-size: 32px;
+    max-width: 280px;
+  }
+  
+  .nav__job-title {
+    max-width: 280px;
+  }
+}
+
 @media screen and (max-width: 580px) {
   .nav__name {
-    font-size: 36px;
+    font-size: 28px;
+    max-width: 240px;
   }
 }
 
@@ -74,25 +122,40 @@
   .nav {
     height: auto;
     padding: 0;
-    display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 36px;
+    gap: 26px;
   }
 
-  .nav__avatar-position {
+  .nav__avatar-container {
     margin: 0;
   }
 
   .nav__container {
     text-align: center;
+    gap: 14px;
   }
+  
   .nav__name {
-    font-size: 24px;
-    margin-bottom: 8px;
+    font-size: 22px;
+    line-height: 1.2;
+    max-width: 196px;
+  }
+  
+  .nav__job-title {
+    font-size: 14px;
+    line-height: 1.2;
+    max-width: 282px;
   }
 
   .nav__button-add {
     width: 100%;
+    max-width: 282px;
+    margin: 0;
+    background-size: 16px;
+  }
+  
+  .nav__name-edit {
+    justify-content: center;
+    gap: 10px;
   }
 }
