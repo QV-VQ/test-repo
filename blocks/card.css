@@ -18,13 +18,14 @@
   width: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .card__place-info {
   display: flex;
-  justify-content: center;
-  align-items: stretch;
-  padding: 28px 25px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 20px;
 }
 
 .card__place-title {
@@ -32,33 +33,60 @@
   color: black;
   font-weight: 900;
   font-size: 24px;
-  line-height: 1;
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: start;
   white-space: nowrap;
+  margin: 0;
 }
 
 .card__icon-container {
-  width: 21px;
-  margin-left: 8px;
-  text-align: center;
-  display: grid;
-  place-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.card__like-button {
+  background: none;
+  border: none;
   cursor: pointer;
+  padding: 0;
+  width: 21px;
+  height: 19px;
+  transition: opacity 0.3s ease;
+}
+
+.card__like-button:hover {
+  opacity: 0.5;
 }
 
 .card__like-icon {
-  width: 21px;
+  width: 100%;
+  height: 100%;
+}
+
+.card__like-icon_active {
+  fill: red;
+}
+
+.card__delete-button {
+  position: absolute;
+  top: 18px;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 18px;
+  height: 19px;
+  transition: opacity 0.3s ease;
+}
+
+.card__delete-button:hover {
+  opacity: 0.6;
 }
 
 .card__delete-icon {
-  width: 24px;
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  
-}
-.card__delete-icon:hover {
-  opacity: 0.8;
+  width: 100%;
+  height: 100%;
 }
