@@ -1,58 +1,129 @@
-import Card from "./Components/Card.js";
-import FormValidator from "./Components/FormValidator.js";
-import Popup from "./Components/Popup.js";
-import Section from "./Components/Section.js";
-import { articlesContent, config } from "./data.js";
-import { updateDetails, toggleModal, controlProfileForm, manageModals, manageCardController } from "./utils.js";
+import Card from './Components/Card.js';
+import FormValidator from './Components/FormValidator.js';
+import Section from './Components/Section.js';
+import PopupWithImage from './Components/PopupWithImage.js';
+import PopupWithForm from './Components/PopupWithForm.js';
+import UserInfo from './Components/UserInfo.js';
+import { initialCards, validationConfig } from './data.js';
+import { openModal, closeModal, renderLoading } from './utils.js';
 
-function controlAddPlaceForm(e) {
-  e.preventDefault();
+// Initialize classes
+const userInfo = new UserInfo({
+  nameSelector: '.nav__name',
+  descriptionSelector: '.nav__job-title'
+});
 
-  config.placeDetails.title = config.placeInputTitle.value;
-  config.placeDetails.imageSrc = config.formInputSource.value;
+const cardSection = new Section({
+  items: initialCards,
+  renderer: (cardData) => {
+    const card = createCard(cardData);
+    cardSection.addItem(card);
+  }
+}, '#articles');
 
-  config.articlesSection.prepend(new Card(config.placeDetails).create());
-  toggleModal(config.addPlacePopup);
+const imagePopup = new PopupWithImage('#popup__img-zoom');
+imagePopup.setEventListeners();
+
+const profilePopup = new PopupWithForm('#edit-profile-popup', handleProfileFormSubmit);
+profilePopup.setEventListeners();
+
+const addCardPopup = new PopupWithForm('#add-place-popup', handleAddCardFormSubmit);
+addCardPopup.setEventListeners();
+
+// Enable form validation
+const formValidators = {};
+
+const enableValidation = (config) => {
+  const formList = Array.from(document.querySelectorAll(config.formSelector));
+  formList.forEach((formElement) => {
+    const validator = new FormValidator(config, formElement);
+    const formName = formElement.getAttribute('name');
+    formValidators[formName] = validator;
+    validator.enableValidation();
+  });
+};
+
+enableValidation(validationConfig);
+
+// Card functions
+function createCard(cardData) {
+  const card = new Card(cardData, '#card-template', {
+    handleCardClick: (data) => {
+      imagePopup.open(data.imageUrl, data.imageAlt);
+    },
+    handleLikeClick: (card) => {
+      const isLiked = !card._isLiked;
+      card.updateLikeStatus(isLiked);
+    },
+    handleDeleteClick: (card) => {
+      card.removeCard();
+    }
+  });
+  return card.generateCard();
 }
 
-const cardsSection = new Section(
-  {
-    items: articlesContent,
-    renderer: (item) => {
-      const card = new Card({
-        article: item,
-        handleCardClick: (evt) => {
-          manageCardController(evt);
-        },
-      }).create();
-      cardsSection.addItem(card);
-    },
-  },
-  config.cardsSectionSelector
-);
-cardsSection.renderItems();
-
-(function validateForms() {
-  const forms = document.querySelectorAll(config.formSelector);
-  forms.forEach((form) => new FormValidator(form, config).enableValidations());
-})();
-
-(function setPageEventListeners() {
-  window.addEventListener("load", updateDetails);
-  // config.articlesSection.addEventListener("click", manageCardController);
-  document.addEventListener("click", manageModals);
-  config.profileForm.addEventListener("submit", controlProfileForm);
-  config.addPlaceForm.addEventListener("submit", controlAddPlaceForm);
-  config.popups.forEach((popup) => {
-    popup.addEventListener("click", (e) => {
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      manageModals(e, popup);
+// Form handlers
+function handleProfileFormSubmit(formData) {
+  renderLoading(true, profilePopup._submitButton);
+  
+  setTimeout(() => {
+    userInfo.setUserInfo({
+      name: formData['edit-name'],
+      description: formData['edit-about']
     });
+    
+    renderLoading(false, profilePopup._submitButton);
+    profilePopup.close();
+  }, 1000);
+}
+
+function handleAddCardFormSubmit(formData) {
+  renderLoading(true, addCardPopup._submitButton);
+  
+  setTimeout(() => {
+    const newCard = {
+      title: formData['place-title'],
+      imageUrl: formData['place-image-url'],
+      imageAlt: formData['place-title'],
+      isLiked: false
+    };
+    
+    const cardElement = createCard(newCard);
+    cardSection.addItem(cardElement);
+    
+    renderLoading(false, addCardPopup._submitButton);
+    addCardPopup.close();
+  }, 1000);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  cardSection.renderItems();
+  
+  document.querySelector('.nav__button-edit').addEventListener('click', () => {
+    const userData = userInfo.getUserInfo();
+    document.querySelector('#popup-input-name').value = userData.name;
+    document.querySelector('#popup-input-description').value = userData.description;
+    formValidators['edit-form'].resetValidation();
+    profilePopup.open();
   });
-})();
+  
+  document.querySelector('.nav__button-add').addEventListener('click', () => {
+    formValidators['add-place-form'].resetValidation();
+    addCardPopup.open();
+  });
+});
 
-// // create an instance of each popup
-
-const examplepop = new Popup(config.popupPlaceSelector);
-examplepop.open();
+// Handle Enter key for form submission
+document.addEventListener('keydown', (evt) => {
+  if (evt.key === 'Enter' && !evt.shiftKey) {
+    const activeElement = document.activeElement;
+    if (activeElement.tagName === 'INPUT' && activeElement.type !== 'checkbox') {
+      evt.preventDefault();
+      const form = activeElement.closest('form');
+      if (form && form.checkValidity()) {
+        form.dispatchEvent(new Event('submit', { cancelable: true }));
+      }
+    }
+  }
+});
