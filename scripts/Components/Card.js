@@ -1,9 +1,9 @@
 export default class Card {
-  constructor({ data, handleCardClick, handleDeleteClick, handleLikeClick }, templateSelector) {
+  constructor(data, templateSelector, { handleCardClick, handleLikeClick, handleDeleteClick }) {
     this._data = data;
     this._handleCardClick = handleCardClick;
-    this._handleDeleteClick = handleDeleteClick;
     this._handleLikeClick = handleLikeClick;
+    this._handleDeleteClick = handleDeleteClick;
     this._templateSelector = templateSelector;
   }
 
@@ -33,6 +33,7 @@ export default class Card {
     this._isLiked = isLiked;
     this._likeIcon.src = isLiked ? './images/heart-liked.svg' : './images/heart.svg';
     this._likeIcon.alt = isLiked ? 'Unlike this card' : 'Like this card';
+    this._likeIcon.setAttribute('data-is-liked', isLiked);
   }
 
   removeCard() {

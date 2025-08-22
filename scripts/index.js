@@ -1,38 +1,40 @@
-import Card from './Components/Card.js';
-import FormValidator from './Components/FormValidator.js';
-import Section from './Components/Section.js';
-import PopupWithImage from './Components/PopupWithImage.js';
-import PopupWithForm from './Components/PopupWithForm.js';
-import UserInfo from './Components/UserInfo.js';
-import { initialCards, validationConfig } from './data.js';
-import { openModal, closeModal, renderLoading } from './utils.js';
+import Card from "./Components/Card.js";
+import FormValidator from "./Components/FormValidator.js";
+import Section from "./Components/Section.js";
+import PopupWithImage from "./Components/PopupWithImage.js";
+import PopupWithForm from "./Components/PopupWithForm.js";
+import UserInfo from "./Components/UserInfo.js";
+import { initialCards, validationConfig, selectors } from "./data.js";
 
 // Initialize classes
 const userInfo = new UserInfo({
-  nameSelector: '.nav__name',
-  descriptionSelector: '.nav__job-title'
+  nameSelector: selectors.nameSelector,
+  descriptionSelector: selectors.descriptionSelector
 });
 
+// Create card section
 const cardSection = new Section({
   items: initialCards,
   renderer: (cardData) => {
     const card = createCard(cardData);
     cardSection.addItem(card);
   }
-}, '#articles');
+}, selectors.cardsSectionSelector);
 
-const imagePopup = new PopupWithImage('#popup__img-zoom');
+// Create popups
+const imagePopup = new PopupWithImage(selectors.popupImageSelector);
 imagePopup.setEventListeners();
 
-const profilePopup = new PopupWithForm('#edit-profile-popup', handleProfileFormSubmit);
+const profilePopup = new PopupWithForm(selectors.popupProfileSelector, handleProfileFormSubmit);
 profilePopup.setEventListeners();
 
-const addCardPopup = new PopupWithForm('#add-place-popup', handleAddCardFormSubmit);
+const addCardPopup = new PopupWithForm(selectors.popupPlaceSelector, handleAddCardFormSubmit);
 addCardPopup.setEventListeners();
 
-// Enable form validation
+// Form validators
 const formValidators = {};
 
+// Enable form validation
 const enableValidation = (config) => {
   const formList = Array.from(document.querySelectorAll(config.formSelector));
   formList.forEach((formElement) => {
@@ -64,22 +66,24 @@ function createCard(cardData) {
 
 // Form handlers
 function handleProfileFormSubmit(formData) {
-  renderLoading(true, profilePopup._submitButton);
+  profilePopup.setSubmitButtonText('Saving...');
   
+  // Simulate API call with timeout
   setTimeout(() => {
     userInfo.setUserInfo({
       name: formData['edit-name'],
       description: formData['edit-about']
     });
     
-    renderLoading(false, profilePopup._submitButton);
+    profilePopup.resetSubmitButtonText();
     profilePopup.close();
   }, 1000);
 }
 
 function handleAddCardFormSubmit(formData) {
-  renderLoading(true, addCardPopup._submitButton);
+  addCardPopup.setSubmitButtonText('Creating...');
   
+  // Simulate API call with timeout
   setTimeout(() => {
     const newCard = {
       title: formData['place-title'],
@@ -91,24 +95,38 @@ function handleAddCardFormSubmit(formData) {
     const cardElement = createCard(newCard);
     cardSection.addItem(cardElement);
     
-    renderLoading(false, addCardPopup._submitButton);
+    addCardPopup.resetSubmitButtonText();
     addCardPopup.close();
   }, 1000);
 }
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
+  // Load user info from local storage if available
+  const savedName = localStorage.getItem('name');
+  const savedDescription = localStorage.getItem('description');
+  
+  if (savedName || savedDescription) {
+    userInfo.setUserInfo({
+      name: savedName,
+      description: savedDescription
+    });
+  }
+  
+  // Render initial cards
   cardSection.renderItems();
   
-  document.querySelector('.nav__button-edit').addEventListener('click', () => {
+  // Edit profile button
+  document.querySelector(selectors.editProfileBtnSelector).addEventListener('click', () => {
     const userData = userInfo.getUserInfo();
     document.querySelector('#popup-input-name').value = userData.name;
     document.querySelector('#popup-input-description').value = userData.description;
-    formValidators['edit-form'].resetValidation();
+    formValidators['edit-profile-form'].resetValidation();
     profilePopup.open();
   });
   
-  document.querySelector('.nav__button-add').addEventListener('click', () => {
+  // Add new place button
+  document.querySelector(selectors.addNewPlaceBtnSelector).addEventListener('click', () => {
     formValidators['add-place-form'].resetValidation();
     addCardPopup.open();
   });

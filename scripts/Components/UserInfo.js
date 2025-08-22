@@ -12,7 +12,11 @@ export default class UserInfo {
   }
 
   setUserInfo({ name, description }) {
-    this._nameElement.textContent = name;
-    this._descriptionElement.textContent = description;
+    if (name) this._nameElement.textContent = name;
+    if (description) this._descriptionElement.textContent = description;
+    
+    // Save to local storage
+    if (name) localStorage.setItem('name', name);
+    if (description) localStorage.setItem('description', description);
   }
 }

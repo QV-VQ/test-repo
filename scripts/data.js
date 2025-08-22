@@ -6,13 +6,13 @@ export const initialCards = [
     isLiked: false,
   },
   {
-    title: "Berlin ",
+    title: "Berlin",
     imageUrl: "./images/berlin.webp",
     imageAlt: "Image of the Berlin arches",
     isLiked: false,
   },
   {
-    title: " Nagoyan",
+    title: "Nagoyan",
     imageUrl: "./images/nagoyan.webp",
     imageAlt: "Image of a cherry blosom near a temple in Nagoyan",
     isLiked: false,
@@ -44,4 +44,18 @@ export const validationConfig = {
   inactiveButtonClass: 'popup__button-submit_disabled',
   inputErrorClass: 'popup__input_type_error',
   errorClass: 'popup__error_visible'
+};
+
+// Selectors only (no DOM elements)
+export const selectors = {
+  cardsSectionSelector: "#articles",
+  popupProfileSelector: "#edit-profile-popup",
+  popupPlaceSelector: "#add-place-popup",
+  popupImageSelector: "#popup__img-zoom",
+  editProfileBtnSelector: "#edit-profile-btn",
+  addNewPlaceBtnSelector: ".nav__button-add",
+  profileFormSelector: "#form-profile",
+  addPlaceFormSelector: "#form-place",
+  nameSelector: ".nav__name",
+  descriptionSelector: ".nav__job-title"
 };
