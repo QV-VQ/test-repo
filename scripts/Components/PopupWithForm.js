@@ -39,4 +39,10 @@ export default class PopupWithForm extends Popup {
   resetSubmitButtonText() {
     this._submitButton.textContent = this._submitButtonText;
   }
+  
+  // New method to reset validation when opening
+  open() {
+    super.open();
+    // Reset validation will be called from index.js after opening
+  }
 }

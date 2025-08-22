@@ -19,3 +19,9 @@
 .button:disabled:hover {
   opacity: 1;
 }
+.popup__button-submit:disabled {
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.2);
+  cursor: not-allowed;
+}

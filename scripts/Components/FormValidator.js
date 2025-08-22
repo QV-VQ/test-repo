@@ -35,6 +35,13 @@ class FormValidator {
   _toggleSubmitBtnState = () => {
     const areValidInputs = this._checkInputListValidity();
     this._submitButton.disabled = !areValidInputs;
+    
+    // Add/remove disabled class for styling
+    if (this._submitButton.disabled) {
+      this._submitButton.classList.add(this._config.inactiveButtonClass);
+    } else {
+      this._submitButton.classList.remove(this._config.inactiveButtonClass);
+    }
   };
 
   _getInputs = () => {
@@ -53,18 +60,22 @@ class FormValidator {
     });
   };
 
-  enableValidations = () => {
+  enableValidation = () => {
     this._inputList = this._getInputs();
     this._submitButton = this._form.querySelector(this._config.submitButtonSelector);
-    this._submitButton.disabled = true;
+    
+    // Set initial button state
+    this._toggleSubmitBtnState();
 
     this._setEventListeners();
   };
-}
+
   resetValidation() {
-    this._toggleButtonState();
     this._inputList.forEach((inputElement) => {
       this._hideInputError(inputElement);
     });
+    this._toggleSubmitBtnState();
   }
+}
+
 export default FormValidator;
